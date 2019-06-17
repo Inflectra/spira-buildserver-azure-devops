@@ -1,0 +1,40 @@
+{
+    "manifestVersion": 1,
+    "id": "spira-extension",
+    "publisher": "Inflecta Corporation",
+    "version": "0.1",
+    "name": "Spira extension for Azure DevOps",
+    "public": false,
+    "categories": [
+        "Azure Repos"
+    ],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "contributions": [
+        {
+            "id": "my-hub",
+            "type": "ms.vss-web.hub",
+            "targets": [
+                "ms.vss-code-web.code-hub-group"
+            ],
+            "properties": {
+                "name": "Spira Hub",
+                "uri": "spira-hub.html"
+            }
+        }
+    ],
+    "files": [
+        {
+            "path": "spira-hub.html",
+            "addressable": true
+        },
+        {
+            "path": "node_modules/vss-web-extension-sdk/lib",
+            "addressable": true,
+            "packagePath": "lib"
+        }
+    ]
+}
