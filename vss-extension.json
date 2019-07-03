@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "spira-extension",
     "publisher": "Inflectra",
-    "version": "0.1.2.8",
+    "version": "0.1.2.10",
     "name": "Spira extension for Azure DevOps",
     "public": false,
     "categories": [
@@ -15,7 +15,7 @@
     ],
     "files": [
         {
-            "path": "node_modules/vss-web-extension-sdk/lib",
+            "path": "node_modules",
             "addressable": true,
             "packagePath": "lib"
         },

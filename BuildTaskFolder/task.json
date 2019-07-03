@@ -20,29 +20,11 @@
     "instanceNameFomat": "Spira Endpoint Task $(project)",
     "inputs": [
         {
-            "name": "SpiraService",
-            "type": "connectedService:Spira",
-            "label": "SpiraPlan project",
-            "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "Select the SpiraPlan project to send test runs to."
-        },
-        {
             "name": "project",
-            "type": "pickList",
-            "label": "SpiraPlan Project",
+            "type": "string",
+            "label": "Spira Project ID",
             "required": true,
-            "helpMarkDown": "Select the name of the SpiraPlan product to use",
-            "properties": {
-                "EditableOptions": "True"
-            }
-        }
-    ],
-    "dataSourceBindings": [
-        {
-            "target": "project",
-            "endpointId": "$(SpiraService)",
-            "dataSourceName": "{{endpoint.url}}/Services/v5_0/RestService.svc/projects?username={{endpoint.username}}&api-key={{endpoint.password}}"
+            "helpMarkDown": "Enter the ID of the project in Spira you would like to send your test results to."
         }
     ],
     "execution": {

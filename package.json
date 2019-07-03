@@ -1,8 +1,8 @@
 {
-  "name": "azure-devops",
+  "name": "spiraplan-azure-devops",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./BuildTaskFolder/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
