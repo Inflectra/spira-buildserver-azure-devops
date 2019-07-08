@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tl = require("azure-pipelines-task-lib/task");
 const SPIRA_SERVICE_URL = "/Services/v5_0/RestService.svc/";
-const EXTENSION_ID = "spira-extension";
+const EXTENSION_ID = "Spira-Endpoint";
 function run() {
     let url = tl.getEndpointUrl(EXTENSION_ID, false) + SPIRA_SERVICE_URL
         + "projects/" + tl.getInput("project") + "/test-runs/record?username="

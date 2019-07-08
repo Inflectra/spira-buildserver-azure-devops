@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "spira-extension",
     "publisher": "Inflectra",
-    "version": "0.1.2.21",
+    "version": "0.1.2.24",
     "name": "Spira extension for Azure DevOps",
     "public": false,
     "categories": [
@@ -25,7 +25,8 @@
     ],
     "contributions": [
         {
-            "id": "service-endpoint",
+            "id": "e998e6db-9232-4259-85f0-3e5c7ad61769",
+            "name": "Spira-Endpoint",
             "description": "Service endpoint for SpiraPlan integration",
             "type": "ms.vss-endpoint.service-endpoint-type",
             "targets": [
@@ -40,9 +41,9 @@
                 },
                 "dataSources": [
                     {
-                        "name": "SpiraPlan Projects",
-                        "endpointUrl": "{{endpoint.url}}/Services/v5_0/RestService.svc/projects?username={{endpoint.username}}&api-key={{endpoint.password}}",
-                        "resultSelector": "jsonpath:$[*].spira"
+                        "name": "TestConnection",
+                        "endpointUrl": "{{endpoint.url}}/Services/v5_0/RestService.svc/users?username={{endpoint.username}}&api-key={{endpoint.password}}",
+                        "resultSelector": "jsonpath:$.username[*]"
                     }
                 ],
                 "authenticationSchemes": [
