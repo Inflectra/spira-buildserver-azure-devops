@@ -25,6 +25,13 @@
             "label": "Spira Project ID",
             "required": true,
             "helpMarkDown": "Enter the ID of the project in Spira you would like to send your test results to."
+        },
+        {
+            "name": "connectedService",
+            "type": "connectedService:SpiraPlanConfig",
+            "label": "Spira Connected Service",
+            "required": true,
+            "helpMarkDown": "Service endpoint connection for Spira credentials"
         }
     ],
     "execution": {
