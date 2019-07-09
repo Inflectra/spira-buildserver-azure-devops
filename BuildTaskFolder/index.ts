@@ -1,6 +1,7 @@
 import tl = require('azure-pipelines-task-lib/task');
 import http = require('http');
 import https = require('https');
+import fs = require('fs');
 
 const SPIRA_SERVICE_URL = "/Services/v5_0/RestService.svc/";
 
@@ -12,7 +13,20 @@ function run() {
         + "projects/" + tl.getInput("project") + "/test-runs/record?username="
         + auth["username"] + "&api-key=" + auth["password"];
 
-    postTestRun(url, 14, "DevOps Name", "This is a message!", "An error occured while generating the error message", 2, 20, 7);
+    let directory = tl.getInput("testResultsLocation");
+    tl.logIssue(tl.IssueType.Warning, "Directory: " + directory);
+    fs.readdirSync(directory + "/").forEach(file => {
+        tl.logIssue(tl.IssueType.Warning, file);
+    });
+
+    let paths: string[] = [directory];
+
+    tl.match(paths, "*.xml").forEach(file => {
+        tl.logIssue(tl.IssueType.Warning, file);
+    });
+    tl.
+
+    //postTestRun(url, 14, "DevOps Name", "This is a message!", "An error occured while generating the error message", 2, 20, 7);
 }
 
 function postTestRun(url: string, testCaseId: number, testName: string, message: string, stackTrace: string,

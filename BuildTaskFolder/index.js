@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tl = require("azure-pipelines-task-lib/task");
 const http = require("http");
 const https = require("https");
+const fs = require("fs");
 const SPIRA_SERVICE_URL = "/Services/v5_0/RestService.svc/";
 function run() {
     let endpointName = tl.getInput("connectedService", true);
@@ -10,7 +11,16 @@ function run() {
     let url = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
         + "projects/" + tl.getInput("project") + "/test-runs/record?username="
         + auth["username"] + "&api-key=" + auth["password"];
-    postTestRun(url, 14, "DevOps Name", "This is a message!", "An error occured while generating the error message", 2, 20, 7);
+    let directory = tl.getInput("testResultsLocation");
+    tl.logIssue(tl.IssueType.Warning, "Directory: " + directory);
+    fs.readdirSync(directory + "/").forEach(file => {
+        tl.logIssue(tl.IssueType.Warning, file);
+    });
+    let paths = [directory];
+    tl.match(paths, "*.xml").forEach(file => {
+        tl.logIssue(tl.IssueType.Warning, file);
+    });
+    //postTestRun(url, 14, "DevOps Name", "This is a message!", "An error occured while generating the error message", 2, 20, 7);
 }
 function postTestRun(url, testCaseId, testName, message, stackTrace, statusId, releaseId, testSetId) {
     var protocol = http.request;
