@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "spira-extension",
     "publisher": "Inflectra",
-    "version": "0.1.3.6",
+    "version": "0.1.3.13",
     "name": "Spira extension for Azure DevOps",
     "public": false,
     "categories": [

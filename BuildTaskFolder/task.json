@@ -20,6 +20,13 @@
     "instanceNameFomat": "Spira Endpoint Task $(project)",
     "inputs": [
         {
+            "name": "connectedService",
+            "type": "connectedService:SpiraPlanConfig",
+            "label": "Spira Credentials",
+            "required": true,
+            "helpMarkDown": "Service endpoint connection for Spira credentials"
+        },
+        {
             "name": "project",
             "type": "string",
             "label": "Spira Project ID",
@@ -27,11 +34,24 @@
             "helpMarkDown": "Enter the ID of the project in Spira you would like to send your test results to."
         },
         {
-            "name": "connectedService",
-            "type": "connectedService:SpiraPlanConfig",
-            "label": "Spira Connected Service",
-            "required": true,
-            "helpMarkDown": "Service endpoint connection for Spira credentials"
+            "name": "testResultsFormat",
+            "type": "pickList",
+            "label": "Test Results Format",
+            "options": {
+                "JUnit": "JUnit",
+                "NUnit 3": "NUnit 3",
+                "XUnit": "XUnit"
+            },
+            "defaultValue": "JUnit",
+            "required": false,
+            "helpMarkDown": "Format of the test results"
+        },
+        {
+            "name": "testResultsGlob",
+            "type": "string",
+            "label": "Test Results Pattern",
+            "required": false,
+            "helpMarkDown": "Glob pattern for the test files (ex. junitresults-*.xml)"
         }
     ],
     "execution": {
