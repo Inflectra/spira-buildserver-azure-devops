@@ -11,9 +11,9 @@ function run() {
     let url = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
         + "projects/" + tl.getInput("project") + "/test-runs/record?username="
         + auth["username"] + "&api-key=" + auth["password"];
-    let directory = tl.getInput("buildUri") + tl.getInput("testResultsLocation");
+    let directory = tl.getInput("buildDirectory");
     tl.logIssue(tl.IssueType.Warning, "Directory: " + directory);
-    tl.logIssue(tl.IssueType.Warning, "Find: " + tl.find(tl.getInput("buildUri")).join(', '));
+    tl.logIssue(tl.IssueType.Warning, "Find: " + tl.find(tl.getInput("buildDirectory")).join(', '));
     fs.readdirSync(directory + "/").forEach(file => {
         tl.logIssue(tl.IssueType.Warning, file);
     });
