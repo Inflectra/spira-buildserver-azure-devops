@@ -13,34 +13,44 @@ function run() {
         + "projects/" + tl.getInput("project") + "/test-runs/record?username="
         + auth["username"] + "&api-key=" + auth["password"];
 
+    let status = tl.getInput("buildStatus");
+    let build = {
+        BuildStatusId: -1,
+        Description: "TODO: Make this dynamic!",
+        Name: tl.getInput("buildNumber"),
+        ReleaseId: tl.getInput("releaseId")
+    }
+    switch (status) {
+        //1 is failed, 2 is success in Spira
+        case "Canceled": build.BuildStatusId = 1; break;
+        case "Failed": build.BuildStatusId = 1; break;
+        case "Succeeded": build.BuildStatusId = 2; break;
+        case "SucceededWithIssues": build.BuildStatusId = 2; break;
+    }
 
+    tl.logIssue(tl.IssueType.Warning, "Build: " + JSON.stringify(build));
+
+    let sourceVersion = tl.getInput("sourceVersion");
+    tl.logIssue(tl.IssueType.Warning, "Source Version: " + sourceVersion);
+
+    /*
     let directory = tl.getInput("buildDirectory");
     tl.logIssue(tl.IssueType.Warning, "Directory: " + directory);
+    tl.logIssue(tl.IssueType.Warning, tl.find(directory).join(", ")); */
 
-    tl.logIssue(tl.IssueType.Warning, "Find: " + tl.find(tl.getInput("buildDirectory")).join(', '));
+    /* let allFiles = tl.find('.');
+    tl.logIssue(tl.IssueType.Warning, allFiles.join(', '));
 
-    fs.readdirSync(directory + "/").forEach(file => {
-        tl.logIssue(tl.IssueType.Warning, file);
-    });
-
-    let d = tl.find('.');
-    tl.logIssue(tl.IssueType.Warning, d.join(', '));
-
-    let paths: string[] = [directory];
-
-    tl.match(paths, "*.xml").forEach(file => {
-        tl.logIssue(tl.IssueType.Warning, file);
-    });
-    tl.ls("-A", paths).forEach(file => {
-        tl.logIssue(tl.IssueType.Warning, "File: " + file);
-    })
+    tl.match(allFiles, tl.getInput("testResultsGlob")).forEach(file => {
+        fs.readFile(file, (err, data: Buffer) => {
+            tl.logIssue(tl.IssueType.Warning, data.join(" "));
+        });
+    });*/
 
     //postTestRun(url, 14, "DevOps Name", "This is a message!", "An error occured while generating the error message", 2, 20, 7);
 }
 
-function postTestRun(url: string, testCaseId: number, testName: string, message: string, stackTrace: string,
-    statusId: number, releaseId: number, testSetId: number) {
-
+function postJson(url: string, json: string, callback: ((data: any) => void) | undefined) {
     var protocol = http.request;
     if (url.startsWith("https")) {
         protocol = https.request;
@@ -65,7 +75,27 @@ function postTestRun(url: string, testCaseId: number, testName: string, message:
         }
     }
 
-    tl.logIssue(tl.IssueType.Warning, "Posting Test Run!");
+    //open the POST request
+    var request = protocol(options, (res) => {
+
+        res.on('data', chunk => {
+            callback(chunk);
+
+        })
+    });
+
+    request.on("error", e => {
+        tl.logIssue(tl.IssueType.Error, "Spira Error: " + e);
+    })
+
+    //actually send the data
+    request.write(json);
+    request.end();
+}
+
+function postTestRun(url: string, testCaseId: number, testName: string, message: string, stackTrace: string,
+    statusId: number, releaseId: number, testSetId: number) {
+
     var testRun = {
         //1 for plain text
         TestRunFormatId: 1,
@@ -82,23 +112,8 @@ function postTestRun(url: string, testCaseId: number, testName: string, message:
         TestSetId: testSetId
     }
 
+    postJson(url, JSON.stringify(testRun));
 
-    //open the POST request
-    var request = protocol(options, (res) => {
-
-        res.on('data', chunk => {
-            tl.logIssue(tl.IssueType.Warning, "RETURN: " + chunk)
-
-        })
-    });
-
-    request.on("error", e => {
-        tl.logIssue(tl.IssueType.Error, "Spira Error: " + e);
-    })
-
-    //actually send the data
-    request.write(JSON.stringify(testRun));
-    request.end();
 }
 
 /**
