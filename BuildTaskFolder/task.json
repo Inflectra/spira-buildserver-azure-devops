@@ -1,10 +1,10 @@
 {
     "id": "33191b0c-3c57-4532-a11a-dcc5ab7fb467",
     "name": "spira-build-task",
-    "friendlyName": "Export data to SpiraPlan",
-    "description": "Exports data on test runs to SpiraPlan",
-    "author": "Inflectra",
-    "helpMarkDown": "TODO: Add help markdown!",
+    "friendlyName": "Export data to Spira",
+    "description": "Exports build results to Spira",
+    "author": "EvilDauphin",
+    "helpMarkDown": "See marketplace entry for documentation",
     "category": "Build",
     "visibility": [
         "Build",
@@ -41,6 +41,13 @@
             "helpMarkDown": "Enter the ID of the release in Spira you would like your results to be associated with."
         },
         {
+            "name": "baseUrl",
+            "type": "string",
+            "label": "DevOps Organization URL",
+            "required": true,
+            "helpMarkDown": "Base URL of your DevOps instance (ex. https://dev.azure.com/fabrikam or https://fabrikam.visualstudio.com)"
+        },
+        {
             "name": "buildNumber",
             "type": "string",
             "label": "Build Name",
@@ -57,12 +64,28 @@
             "helpMarkDown": "Status of the build being created. Just leave at '$(Agent.JobStatus)'"
         },
         {
+            "name": "buildId",
+            "type": "String",
+            "label": "Build ID",
+            "required": true,
+            "defaultValue": "$(Build.BuildId)",
+            "helpMarkDown": "ID of the build being created. Just leave at '$(Build.BuildId)'"
+        },
+        {
             "name": "sourceVersion",
             "type": "string",
             "label": "Source Version",
             "required": true,
             "defaultValue": "$(Build.SourceVersion)",
             "helpMarkDown": "Source code version of the build. Just leave at '$(Build.SourceVersion)'"
+        },
+        {
+            "name": "projectName",
+            "type": "string",
+            "label": "DevOps Project Name",
+            "required": true,
+            "defaultValue": "$(System.TeamProject)",
+            "helpMarkDown": "Name of the DevOps project for this build. Just leave at '$(System.TeamProject)'"
         }
     ],
     "execution": {

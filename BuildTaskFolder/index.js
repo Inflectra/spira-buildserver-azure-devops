@@ -5,18 +5,23 @@ const http = require("http");
 const https = require("https");
 const SPIRA_SERVICE_URL = "/Services/v5_0/RestService.svc/";
 function run() {
-    let endpointName = tl.getInput("connectedService", true);
-    let auth = tl.getEndpointAuthorization(endpointName, false).parameters;
-    let url = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
-        + "projects/" + tl.getInput("project") + "/test-runs/record?username="
-        + auth["username"] + "&api-key=" + auth["password"];
-    let status = tl.getInput("buildStatus");
+    //url of the build in DevOps to be added to the description field of the build in Spira
+    let buildUrl = tl.getInput("baseUrl") + "/" + tl.getInput("projectName") +
+        "/_build/results?buildId=" + tl.getInput("buildId");
+    //the build object being sent to Spira
     let build = {
         BuildStatusId: -1,
-        Description: "TODO: Make this dynamic!",
+        Description: buildUrl,
         Name: tl.getInput("buildNumber"),
-        ReleaseId: tl.getInput("releaseId")
+        ReleaseId: tl.getInput("releaseId"),
+        Revisions: [
+            {
+                RevisionKey: tl.getInput("sourceVersion")
+            }
+        ]
     };
+    //convert the DevOps build status to Spira
+    let status = tl.getInput("buildStatus");
     switch (status) {
         //1 is failed, 2 is success in Spira
         case "Canceled":
@@ -31,24 +36,25 @@ function run() {
         case "SucceededWithIssues":
             build.BuildStatusId = 2;
             break;
+        default:
+            build.BuildStatusId = 1;
+            break;
     }
-    tl.logIssue(tl.IssueType.Warning, "Build: " + JSON.stringify(build));
-    let sourceVersion = tl.getInput("sourceVersion");
-    tl.logIssue(tl.IssueType.Warning, "Source Version: " + sourceVersion);
-    /*
-    let directory = tl.getInput("buildDirectory");
-    tl.logIssue(tl.IssueType.Warning, "Directory: " + directory);
-    tl.logIssue(tl.IssueType.Warning, tl.find(directory).join(", ")); */
-    /* let allFiles = tl.find('.');
-    tl.logIssue(tl.IssueType.Warning, allFiles.join(', '));
-
-    tl.match(allFiles, tl.getInput("testResultsGlob")).forEach(file => {
-        fs.readFile(file, (err, data: Buffer) => {
-            tl.logIssue(tl.IssueType.Warning, data.join(" "));
-        });
-    });*/
-    //postTestRun(url, 14, "DevOps Name", "This is a message!", "An error occured while generating the error message", 2, 20, 7);
+    //The name of the service connection set in DevOps project settings
+    let endpointName = tl.getInput("connectedService", true);
+    let auth = tl.getEndpointAuthorization(endpointName, false).parameters;
+    //create the url to POST the build to Spira
+    let url = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
+        + "projects/" + tl.getInput("project") + "/releases/" + tl.getInput("releaseId") +
+        "/builds?username=" + auth["username"] + "&api-key=" + auth["password"];
+    //POST the new build to Spira
+    postJson(url, JSON.stringify(build), data => {
+        // do nothing
+    });
 }
+/**
+ * Post the given stringified json to the given url (with authentication included in the url)
+ */
 function postJson(url, json, callback) {
     var protocol = http.request;
     if (url.startsWith("https")) {
@@ -84,6 +90,9 @@ function postJson(url, json, callback) {
     request.write(json);
     request.end();
 }
+/**
+ * Post a new Test Run to Spira. This code is currently unused, but is tested and will work
+ */
 function postTestRun(url, testCaseId, testName, message, stackTrace, statusId, releaseId, testSetId) {
     var testRun = {
         //1 for plain text
@@ -100,7 +109,9 @@ function postTestRun(url, testCaseId, testName, message, stackTrace, statusId, r
         ReleaseId: releaseId,
         TestSetId: testSetId
     };
-    postJson(url, JSON.stringify(testRun));
+    postJson(url, JSON.stringify(testRun), data => {
+        //do nothing
+    });
 }
 /**
  * Formats a Date object in a way the Spira API likes

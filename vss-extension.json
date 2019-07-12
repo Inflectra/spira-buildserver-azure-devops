@@ -1,13 +1,31 @@
 {
     "manifestVersion": 1,
     "id": "spira-extension",
-    "publisher": "Inflectra",
-    "version": "0.1.3.29",
+    "publisher": "EvilDauphin",
+    "version": "0.9",
     "name": "Spira extension for Azure DevOps",
-    "public": false,
     "categories": [
-        "Azure Repos"
+        "Azure Pipelines"
     ],
+    "tags": [
+        "test execution",
+        "build",
+        "ci"
+    ],
+    "branding": {
+        "theme": "light"
+    },
+    "galleryFlags": [
+        "Preview"
+    ],
+    "icons": {
+        "default": "spiraplan-icon.png"
+    },
+    "content": {
+        "details": {
+            "path": "README.md"
+        }
+    },
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"

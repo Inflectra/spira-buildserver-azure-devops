@@ -6,51 +6,53 @@ import fs = require('fs');
 const SPIRA_SERVICE_URL = "/Services/v5_0/RestService.svc/";
 
 function run() {
-    let endpointName: string = tl.getInput("connectedService", true);
-    let auth = tl.getEndpointAuthorization(endpointName, false).parameters;
+    //url of the build in DevOps to be added to the description field of the build in Spira
+    let buildUrl = tl.getInput("baseUrl") + "/" + tl.getInput("projectName") +
+        "/_build/results?buildId=" + tl.getInput("buildId");
 
-    let url: string = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
-        + "projects/" + tl.getInput("project") + "/test-runs/record?username="
-        + auth["username"] + "&api-key=" + auth["password"];
-
-    let status = tl.getInput("buildStatus");
+    //the build object being sent to Spira
     let build = {
         BuildStatusId: -1,
-        Description: "TODO: Make this dynamic!",
+        Description: buildUrl,
         Name: tl.getInput("buildNumber"),
-        ReleaseId: tl.getInput("releaseId")
+        ReleaseId: tl.getInput("releaseId"),
+        Revisions: [
+            {
+                RevisionKey: tl.getInput("sourceVersion")
+            }
+        ]
     }
+
+    //convert the DevOps build status to Spira
+    let status = tl.getInput("buildStatus");
     switch (status) {
         //1 is failed, 2 is success in Spira
         case "Canceled": build.BuildStatusId = 1; break;
         case "Failed": build.BuildStatusId = 1; break;
         case "Succeeded": build.BuildStatusId = 2; break;
         case "SucceededWithIssues": build.BuildStatusId = 2; break;
+        default: build.BuildStatusId = 1; break;
     }
 
-    tl.logIssue(tl.IssueType.Warning, "Build: " + JSON.stringify(build));
+    //The name of the service connection set in DevOps project settings
+    let endpointName: string = tl.getInput("connectedService", true);
+    let auth = tl.getEndpointAuthorization(endpointName, false).parameters;
 
-    let sourceVersion = tl.getInput("sourceVersion");
-    tl.logIssue(tl.IssueType.Warning, "Source Version: " + sourceVersion);
+    //create the url to POST the build to Spira
+    let url: string = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
+        + "projects/" + tl.getInput("project") + "/releases/" + tl.getInput("releaseId") +
+        "/builds?username=" + auth["username"] + "&api-key=" + auth["password"];
 
-    /*
-    let directory = tl.getInput("buildDirectory");
-    tl.logIssue(tl.IssueType.Warning, "Directory: " + directory);
-    tl.logIssue(tl.IssueType.Warning, tl.find(directory).join(", ")); */
-
-    /* let allFiles = tl.find('.');
-    tl.logIssue(tl.IssueType.Warning, allFiles.join(', '));
-
-    tl.match(allFiles, tl.getInput("testResultsGlob")).forEach(file => {
-        fs.readFile(file, (err, data: Buffer) => {
-            tl.logIssue(tl.IssueType.Warning, data.join(" "));
-        });
-    });*/
-
-    //postTestRun(url, 14, "DevOps Name", "This is a message!", "An error occured while generating the error message", 2, 20, 7);
+    //POST the new build to Spira
+    postJson(url, JSON.stringify(build), data => {
+        // do nothing
+    });
 }
 
-function postJson(url: string, json: string, callback: ((data: any) => void) | undefined) {
+/**
+ * Post the given stringified json to the given url (with authentication included in the url)
+ */
+function postJson(url: string, json: string, callback: ((data: any) => void)) {
     var protocol = http.request;
     if (url.startsWith("https")) {
         protocol = https.request;
@@ -80,19 +82,21 @@ function postJson(url: string, json: string, callback: ((data: any) => void) | u
 
         res.on('data', chunk => {
             callback(chunk);
-
-        })
+        });
     });
 
     request.on("error", e => {
         tl.logIssue(tl.IssueType.Error, "Spira Error: " + e);
-    })
+    });
 
     //actually send the data
     request.write(json);
     request.end();
 }
 
+/**
+ * Post a new Test Run to Spira. This code is currently unused, but is tested and will work
+ */
 function postTestRun(url: string, testCaseId: number, testName: string, message: string, stackTrace: string,
     statusId: number, releaseId: number, testSetId: number) {
 
@@ -112,7 +116,9 @@ function postTestRun(url: string, testCaseId: number, testName: string, message:
         TestSetId: testSetId
     }
 
-    postJson(url, JSON.stringify(testRun));
+    postJson(url, JSON.stringify(testRun), data => {
+        //do nothing
+    });
 
 }
 
