@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "spira-extension",
     "publisher": "EvilDauphin",
-    "version": "0.9",
+    "version": "1.0",
     "name": "Spira extension for Azure DevOps",
     "categories": [
         "Azure Pipelines"
@@ -16,7 +16,7 @@
         "theme": "light"
     },
     "galleryFlags": [
-        "Preview"
+        "Public"
     ],
     "icons": {
         "default": "spiraplan-icon.png"
