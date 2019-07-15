@@ -1,0 +1,109 @@
+{
+    "manifestVersion": 1,
+    "id": "spira-extension",
+    "publisher": "EvilDauphin",
+    "version": "1.0",
+    "name": "Spira extension for Azure DevOps",
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "tags": [
+        "test execution",
+        "build",
+        "ci"
+    ],
+    "branding": {
+        "theme": "light"
+    },
+    "galleryFlags": [
+        "Public"
+    ],
+    "icons": {
+        "default": "spiraplan-icon.png"
+    },
+    "content": {
+        "details": {
+            "path": "README.md"
+        }
+    },
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "files": [
+        {
+            "path": "node_modules",
+            "addressable": true,
+            "packagePath": "BuildTaskFolder/node_modules"
+        },
+        {
+            "path": "BuildTaskFolder"
+        }
+    ],
+    "contributions": [
+        {
+            "id": "e998e6db-9232-4259-85f0-3e5c7ad61769",
+            "name": "Spira-Endpoint",
+            "description": "Service endpoint for SpiraPlan integration",
+            "type": "ms.vss-endpoint.service-endpoint-type",
+            "targets": [
+                "ms.vss-endpoint.endpoint-types"
+            ],
+            "properties": {
+                "name": "SpiraPlanConfig",
+                "displayName": "SpiraPlan Configuration",
+                "url": {
+                    "displayName": "SpiraPlan URL",
+                    "helpText": "Base URL for your SpiraPlan instance"
+                },
+                "dataSources": [
+                    {
+                        "name": "TestConnection",
+                        "endpointUrl": "{{endpoint.url}}/Services/v5_0/RestService.svc/users?username={{endpoint.username}}&api-key={{endpoint.password}}",
+                        "resultSelector": "jsonpath:$.username[*]"
+                    }
+                ],
+                "authenticationSchemes": [
+                    {
+                        "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
+                        "inputDescriptors": [
+                            {
+                                "id": "username",
+                                "name": "Username",
+                                "description": "SpiraPlan Username",
+                                "inputMode": "textbox",
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "password",
+                                "name": "RSS Token",
+                                "Description": "SpiraPlan API Key",
+                                "inputMode": "textbox",
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "helpMarkDown": ""
+            }
+        },
+        {
+            "id": "build-task",
+            "description": "Task for retrieving data from SpiraPlan",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "BuildTaskFolder"
+            }
+        }
+    ]
+}
