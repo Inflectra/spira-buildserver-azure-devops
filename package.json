@@ -1,6 +1,6 @@
 {
   "name": "spiraplan-azure-devops",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "./BuildTaskFolder/index.js",
   "scripts": {
@@ -10,9 +10,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^20.6.5",
+    "@types/node": "^20.17.0",
     "@types/q": "^1.5.6",
-    "azure-pipelines-task-lib": "^4.6.0",
-    "vss-web-extension-sdk": "^5.141.0"
+    "azure-devops-extension-sdk": "^4.0.2",
+    "azure-pipelines-task-lib": "^4.17.0"
   }
 }
