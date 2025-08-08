@@ -1,15 +1,71 @@
-import tl = require('azure-pipelines-task-lib/task');
-import http = require('http');
-import https = require('https');
-import fs = require('fs');
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
 
+/***/ 533:
+/***/ ((module) => {
+
+module.exports = require("azure-pipelines-task-lib/task");
+
+/***/ }),
+
+/***/ 611:
+/***/ ((module) => {
+
+module.exports = require("http");
+
+/***/ }),
+
+/***/ 692:
+/***/ ((module) => {
+
+module.exports = require("https");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it uses a non-standard name for the exports (exports).
+(() => {
+var exports = __webpack_exports__;
+var __webpack_unused_export__;
+
+__webpack_unused_export__ = ({ value: true });
+const tl = __webpack_require__(533);
+const http = __webpack_require__(611);
+const https = __webpack_require__(692);
 const SPIRA_SERVICE_URL = "/Services/v5_0/RestService.svc/";
-
 function run() {
+    var _a;
     //url of the build in DevOps to be added to the description field of the build in Spira
     let buildUrl = tl.getInput("baseUrl") + "/" + tl.getInput("projectName") +
         "/_build/results?buildId=" + tl.getInput("buildId");
-
     //the build object being sent to Spira
     let build = {
         BuildStatusId: -1,
@@ -21,38 +77,43 @@ function run() {
                 RevisionKey: tl.getInput("sourceVersion")
             }
         ]
-    }
-
+    };
     //convert the DevOps build status to Spira
     let status = tl.getInput("buildStatus");
     switch (status) {
         //1 is failed, 2 is success in Spira
-        case "Canceled": build.BuildStatusId = 1; break;
-        case "Failed": build.BuildStatusId = 1; break;
-        case "Succeeded": build.BuildStatusId = 2; break;
-        case "SucceededWithIssues": build.BuildStatusId = 2; break;
-        default: build.BuildStatusId = 1; break;
+        case "Canceled":
+            build.BuildStatusId = 1;
+            break;
+        case "Failed":
+            build.BuildStatusId = 1;
+            break;
+        case "Succeeded":
+            build.BuildStatusId = 2;
+            break;
+        case "SucceededWithIssues":
+            build.BuildStatusId = 2;
+            break;
+        default:
+            build.BuildStatusId = 1;
+            break;
     }
-
     //The name of the service connection set in DevOps project settings
-    let endpointName: string = tl.getInput("connectedService", true) || "";
-    let auth = tl.getEndpointAuthorization(endpointName, false)?.parameters || {};
-
+    let endpointName = tl.getInput("connectedService", true) || "";
+    let auth = ((_a = tl.getEndpointAuthorization(endpointName, false)) === null || _a === void 0 ? void 0 : _a.parameters) || {};
     //create the url to POST the build to Spira
-    let url: string = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
+    let url = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
         + "projects/" + tl.getInput("project") + "/releases/" + tl.getInput("releaseId") +
         "/builds?username=" + auth["username"] + "&api-key=" + auth["password"];
-
     //POST the new build to Spira
     postJson(url, JSON.stringify(build), data => {
         // do nothing
     });
 }
-
 /**
  * Post the given stringified json to the given url (with authentication included in the url)
  */
-function postJson(url: string, json: string, callback: ((data: any) => void)) {
+function postJson(url, json, callback) {
     var protocol = http.request;
     if (url.startsWith("https")) {
         protocol = https.request;
@@ -63,10 +124,8 @@ function postJson(url: string, json: string, callback: ((data: any) => void)) {
         //cut out the http:// out of the url
         url = url.substring(7);
     }
-
     var path = url.substring(url.indexOf("/"));
     url = url.substring(0, url.length - path.length);
-
     var options = {
         host: url,
         path: path,
@@ -75,31 +134,24 @@ function postJson(url: string, json: string, callback: ((data: any) => void)) {
             "Content-Type": "application/json",
             "accept": "application/json"
         }
-    }
-
+    };
     //open the POST request
     var request = protocol(options, (res) => {
-
         res.on('data', chunk => {
             callback(chunk);
         });
     });
-
     request.on("error", e => {
         tl.logIssue(tl.IssueType.Error, "Spira Error: " + e);
     });
-
     //actually send the data
     request.write(json);
     request.end();
 }
-
 /**
  * Post a new Test Run to Spira. This code is currently unused, but is tested and will work
  */
-function postTestRun(url: string, testCaseId: number, testName: string, message: string, stackTrace: string,
-    statusId: number, releaseId: number, testSetId: number) {
-
+function postTestRun(url, testCaseId, testName, message, stackTrace, statusId, releaseId, testSetId) {
     var testRun = {
         //1 for plain text
         TestRunFormatId: 1,
@@ -114,20 +166,21 @@ function postTestRun(url: string, testCaseId: number, testName: string, message:
         StartDate: formatInflectraDate(new Date()),
         ReleaseId: releaseId,
         TestSetId: testSetId
-    }
-
+    };
     postJson(url, JSON.stringify(testRun), data => {
         //do nothing
     });
-
 }
-
 /**
  * Formats a Date object in a way the Spira API likes
  * @param date Date to format
  */
-function formatInflectraDate(date: Date) {
+function formatInflectraDate(date) {
     return "/Date(" + date.getTime() + "-0000)/";
 }
-
 run();
+
+})();
+
+/******/ })()
+;

@@ -5,6 +5,7 @@ const http = require("http");
 const https = require("https");
 const SPIRA_SERVICE_URL = "/Services/v5_0/RestService.svc/";
 function run() {
+    var _a;
     //url of the build in DevOps to be added to the description field of the build in Spira
     let buildUrl = tl.getInput("baseUrl") + "/" + tl.getInput("projectName") +
         "/_build/results?buildId=" + tl.getInput("buildId");
@@ -41,8 +42,8 @@ function run() {
             break;
     }
     //The name of the service connection set in DevOps project settings
-    let endpointName = tl.getInput("connectedService", true);
-    let auth = tl.getEndpointAuthorization(endpointName, false).parameters;
+    let endpointName = tl.getInput("connectedService", true) || "";
+    let auth = ((_a = tl.getEndpointAuthorization(endpointName, false)) === null || _a === void 0 ? void 0 : _a.parameters) || {};
     //create the url to POST the build to Spira
     let url = tl.getEndpointUrl(endpointName, false) + SPIRA_SERVICE_URL
         + "projects/" + tl.getInput("project") + "/releases/" + tl.getInput("releaseId") +

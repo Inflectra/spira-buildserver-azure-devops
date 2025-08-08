@@ -74,9 +74,9 @@ npm install -g tfx-cli
    npm install
    ```
 
-2. Compile TypeScript (if modified):
+2. Build the bundled task:
    ```bash
-   tsc -p BuildTaskFolder/
+   npm run build
    ```
 
 3. Package the extension:
