@@ -13,11 +13,11 @@
     "demands": [],
     "version": {
         "Major": "0",
-        "Minor": "1",
+        "Minor": "2",
         "Patch": "1"
     },
     "minimumAgentVersion": "1.95.0",
-    "instanceNameFomat": "Spira Endpoint Task $(project)",
+    "instanceNameFormat": "Spira Endpoint Task $(project)",
     "inputs": [
         {
             "name": "connectedService",
@@ -89,7 +89,7 @@
         }
     ],
     "execution": {
-        "Node16": {
+        "Node20_1": {
             "target": "index.js"
         }
     }

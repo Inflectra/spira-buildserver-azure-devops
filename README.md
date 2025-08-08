@@ -59,3 +59,49 @@ steps:
     projectName: '$(System.TeamProject)'
 ```
 If everything had been configured correctly a new build in DevOps will create a new build in Spira!
+
+## Developer Setup
+
+### Prerequisites
+Install the TFS Cross Platform Command Line Interface (tfx-cli):
+```bash
+npm install -g tfx-cli
+```
+
+### Building and Packaging
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Compile TypeScript (if modified):
+   ```bash
+   tsc -p BuildTaskFolder/
+   ```
+
+3. Package the extension:
+   ```bash
+   tfx extension create
+   ```
+
+### Version Management
+Update version numbers in these files before packaging:
+
+1. **Extension version** in `vss-extension.json`:
+   ```json
+   "version": "1.1"
+   ```
+
+2. **Task version** in `BuildTaskFolder/task.json`:
+   ```json
+   "version": {
+       "Major": "0",
+       "Minor": "2", 
+       "Patch": "1"
+   }
+   ```
+
+3. **Package version** in `package.json`:
+   ```json
+   "version": "1.1.0"
+   ```

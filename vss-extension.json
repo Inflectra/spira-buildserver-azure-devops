@@ -33,11 +33,6 @@
     ],
     "files": [
         {
-            "path": "node_modules",
-            "addressable": true,
-            "packagePath": "BuildTaskFolder/node_modules"
-        },
-        {
             "path": "BuildTaskFolder"
         }
     ],
