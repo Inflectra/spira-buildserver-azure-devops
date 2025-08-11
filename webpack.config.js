@@ -7,10 +7,6 @@ module.exports = {
         path: path.resolve(__dirname, 'BuildTaskFolder'),
         filename: 'index.bundle.js'
     },
-    externals: {
-        // These are provided by the Azure DevOps agent
-        'azure-pipelines-task-lib/task': 'commonjs azure-pipelines-task-lib/task'
-    },
     mode: 'production',
     optimization: {
         minimize: false // Keep readable for debugging
