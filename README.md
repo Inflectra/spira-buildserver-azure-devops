@@ -60,6 +60,18 @@ steps:
 ```
 If everything had been configured correctly a new build in DevOps will create a new build in Spira!
 
+For successful builds (including `SucceededWithIssues`), the task also sets **Fixed Build**
+on incidents associated in Spira with the `sourceVersion` revision. It uses the Spira
+source-code branch matching `Build.SourceBranch` (with or without `refs/heads/`),
+or the default Spira branch if no match is found. The source-code integration must
+have already synchronized the revision and its incident associations, and the service
+connection user must have permission to update incidents. Other incident fields are
+preserved. Failed or canceled builds are recorded but do not update Fixed Build.
+Later successful builds referencing the same incident overwrite its previous Fixed Build.
+Build-creation failures fail the task. Errors discovering or updating Fixed Build links
+are logged as warnings without failing the task or rolling back the build. An incident
+read or update failure does not prevent attempts to update the remaining incidents.
+
 ## Developer Setup
 
 ### Prerequisites
@@ -77,6 +89,10 @@ npm install -g tfx-cli
 2. Build the bundled task:
    ```bash
    npm run build
+   ```
+   Run the mock Spira integration tests against both generated task files:
+   ```bash
+   npm test
    ```
 
 3. Package the extension:
