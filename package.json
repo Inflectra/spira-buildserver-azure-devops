@@ -5,7 +5,7 @@
   "main": "./BuildTaskFolder/index.js",
   "scripts": {
     "build": "tsc -p BuildTaskFolder/ && webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test tests"
   },
   "keywords": [],
   "author": "",
